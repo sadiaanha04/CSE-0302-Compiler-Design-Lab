@@ -1,102 +1,87 @@
-#include<bits/stdc++.h>
+#include <stdio.h>
+#include <stdlib.h>
 
-using namespace std;
+FILE *fp , *fp2;
 
-vector<string>sp,ke,ri;
-map<string,string>mp,mpp;
-string ans;
-
-bool isTERMINAL (char a){
-if(a>='A' && a<='Z') return true;
-return false;
-}
-
-void FIRST (string key){
-string val = mp[key];
-if (isTERMINAL (val [0])){
-    string p= "";
-    p+= val(0);
-    FIRST (p);
-
-}
-}
-else{
-    ans+= val(0);
-    ans+= ",";
-    int flag=0;
-    for(int i=0; i<val.size(); i++){
-        if(val [i]=='|'){
-            flag= 1;
-            continue;
-        }
-    }
-}
-if(flag){
-    ans += val[i];
-}
-
-void FOLLOW (string key, int z){
-
-int flag=0;
-
-for(int i=0; i<ri.size(); i++)
-    if (ri[i].find(key) != string::npos){
-        if(key.size()==1){
-            for(int j=0; j<ri[i].size(); j++){
-                if (ri[i] [j]== key[0]){
-                    if(j+1<ri.size() && ri[i][j+1]!='\'){
-                        flag= 1;
-                        if(isTERMINAL (ri[i][j+1])==false){
-                            if(z==0) ans +="$,";
-                            ans += ri [i][j+1];
-
-                        }
-                        else{
-                            string g= ri[i];
-                            g.erase(0,1);
-                            FIRST (g);
-                            if (z==0)ans += "$";
-                            FOLLOW (mpp[ri[i],1);
-
-                        }
-                        break;
-                }
-            }
-        }
-    }
-}
-else{
-    for(int j=0; j+1<ri[i].size(); j++){
-        if(ri [i][j]== key[0] && ri[i][j+1]==key [1]){
-            if(j+2>=ri[i].size()){
-                FOLLOW(mpp [ri[i]],1);
-                if(==0)ans += ",$";
-            }
-            else{
-                ans="$";
-            }
-        }
-    }
-    break;
-}
-
-if(flag)break;
-}
-}
-string remove_space(string s){
-    starting p="";
-for (int i=0; i<s.size(); i++){
-    if (s[i]!='') p= p+ s[i];
-}
-return p;
-}
-
-
-
-
-
-int main()
+void check_comment(char a)
 {
-    cout << "Hello world!" << endl;
+    char x;
+
+    if( a == '/')   //checking if the character starts with '/', it will be a comment
+    {
+        if((x=fgetc(fp))=='*')
+         check_block_comment();
+
+        else if( x == '/')   // else if the next character '/', it is the beginning of single line comment
+        {
+          check_single_comment();
+
+        }
+        else
+        {
+            // when both the cases fail then it is not a comment
+            fputc(a,fp2);
+            fputc(x,fp2);
+        }
+    }
+
+    // when all the conditions are false, add the character as it is in the new file.
+    else
+        fputc(a,fp2);
+}
+
+
+// function for block comments
+void check_block_comment()
+{
+
+ char x,y;
+
+    while((x=fgetc(fp))!=EOF)   // the block comment has started
+    {
+
+        if(x=='*')
+        {
+            y=fgetc(fp);  // check if it ends
+
+            if(y=='/')
+                return;
+        }
+   }
+
+}
+
+
+// function for single line comments
+void check_single_comment()
+{
+ char x,y;
+
+    while((x=fgetc(fp))!=EOF)
+    {
+
+        if(x=='\n')
+            return;  // if the comment ends return from the function
+
+    }
+
+}
+
+
+int main(void)
+{
+    char c;
+
+    fp = fopen ("testfile.txt","r") ;   // first file in read mode
+    fp2 = fopen ("solved.txt","w") ;    // second file in write mode
+
+    while(
+          (c=fgetc(fp))!=EOF)
+        check_comment(c);   // checking for the beginning of a comment
+
+     //  closing both files
+    fclose(fp);
+    fclose(fp2);
+
     return 0;
 }
